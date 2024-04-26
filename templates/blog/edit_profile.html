@@ -1,0 +1,74 @@
+{% extends 'blog/base.html'%}
+
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+<style type="text/css">
+	.dob{
+		width:110px;
+		border-radius: 5px;
+	}
+	.form-control{
+		border-color:#158fb0;
+		box-shadow: 1px 2px 3px
+	}
+</style>
+<div class="container my-3">
+
+	
+	<div class="row">
+	<div class="col-md-6 offset-md-3">
+		<h3>Edit your profile</h3><br>
+	{% if messages %}
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+  	    {% for message in messages %}
+	    <a {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</a>
+	    {% endfor %}
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	  {% endif %}
+	<form action="" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		
+		{% if user_form %}
+		<div class="row">
+			<div class="col mb-3">
+				<h6>{{ user_form.username.label_tag }}</h6>{{ user_form.username }}
+			</div>
+			<div class="col mb-3">
+				<h6>{{ user_form.email.label_tag }}</h6>{{ user_form.email }}
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-12 col-sm-6 mb-3">
+				<h6>{{ user_form.first_name.label_tag }}</h6>{{ user_form.first_name }}
+			</div>
+			<div class="col-12 col-sm-6 mb-3">
+				<h6>{{ user_form.last_name.label_tag }}</h6>{{ user_form.last_name }}
+			</div>
+		</div>
+		{% endif %}
+		<div class="row d-flex justify-content-center">
+			<h6>{{ profile_form.birthday.label_tag }}</h6>
+			<div class="mx-3 mb-3"style=""> {{ profile_form.birthday }}</div>
+		</div>
+			
+		<div class="row">
+			{% for field in profile_form.visible_fields|slice:"1:" %}
+			<div class="col-12 col-sm-6 mb-3">
+				<h6>{{ field.label_tag }}</h6>
+				{{ field }}
+			</div>
+			{% endfor %}
+    	</div>
+    	
+		<div class="row d-flex justify-content-center">
+			<button class="btn-sm btn-info mt-2" type="submit">Update</button>
+		</div>
+		
+	</form>
+</div>
+</div>
+</div>
+{% endblock %}

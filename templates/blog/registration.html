@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sign Up</title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<body>
+{% block content %}
+<div class="container my-2">
+	<div class="row">
+		<div class="col-md-4 offset-md-4">
+			<h1><strong>Create an account</strong></h1>
+			<h4>It's quick and easy</h4><br>
+			{% if messages %}
+				{% for message in messages %}
+					<a {% if message.tags %} 
+						class="alert alert-danger" role="alert"
+						{% endif %}>
+					{{message}}
+					</a>
+				{% endfor %}
+			{% endif %}
+		
+		<form action="" method="post">
+		{% csrf_token %}
+			<div class="row">
+			    <div class="col">
+			      {{ form.first_name }}
+			    </div>
+			    <div class="col">
+			      {{ form.last_name }}
+			    </div>
+			</div><br>
+			
+			<div class="form-group-sm">
+			<tr>
+				<td>{{ form.username }}</td>
+				<small  class="p-0" style="color:grey">
+					<ul>
+						<li>Your username should not be more than 15 characters. This value may contain only letters, numbers and @/./+/-/_ characters.</li>
+					</ul>
+				</small>
+				<div class="alert p-0" style="color:red;">
+				<td>{{ form.username.errors }}</td>
+				</div>
+			</tr>
+			<tr>
+				<td>{{ form.email }}</td>
+				<div class="alert p-0" style="color:red;">
+				<td>{{ form.email.errors }}</td>
+				</div>
+			</tr>
+			<tr>
+				<td>{{ form.password1 }}</td>
+				<small style="color:grey">
+					<ul>
+						<li>Your password can't be too similar to your other personal information.</li>
+						<li>Your password must contain at least 8 characters.</li>
+						<li>Your password can't be a commonly used password.</li>
+						<li>Your password can't be entirely numeric.</li>
+					</ul>	
+				</small>
+			</tr>
+			<tr>
+				<td>{{ form.password2 }}</td>
+				<div class="alert p-0" style="color:red;">
+				<td>{{ form.password2.errors }}</td>
+				</div>
+			</tr>
+			</div>
+
+		<p class="tnc" style="color:grey;font-size:12px;">By clicking Sign Up, you agree to our Terms, Data Policy and Cookie Policy. You may receive SMS notifications from us and can opt out at any time.</p>
+		<div class="container" style="text-align: center;"><button type="submit" class="btn btn-info">Sign Up</button>
+		</form></div><br>
+		<p>Already Registered ? <a href="{% url 'blog:user_login' %}">Login Here</a></p>
+		</div>
+	</div>
+</div>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+	<title>
+		{% block title %}
+		{% endblock %}
+	</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+	<link rel='stylesheet' type='text/css' href="{% static 'blog/style.css' %}">
+	{% block head_extra %}
+	{% endblock %}
+	<script
+      defer
+      src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"
+      integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ"
+      crossorigin="anonymous">
+    </script>
+    <style type="text/css">
+    	body {
+			background-color: #e3e8e5;
+    	}
+        .ui-autocomplete {
+        	z-index: 99999
+        }
+    </style>
+<body>
+	{% include 'blog/navbar.html' %}
+	
+	<div class="content" style="padding-top: 60px;">
+	{% block content %}
+	{% endblock %}
+	</div>
+
+
+	
+	<!--Bootstarp script-->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	
+	
+
+
+	<!--jquerui script-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
+  	
+
+  	<style type="text/css">
+  		.ui-autocomplete{
+  			border-radius:5px;
+  			position: fixed; 
+  		}
+		.ui-autocomplete li a{
+			display: block;
+		}
+		.ui-datepicker { font-size:9pt !important}
+  		
+  	</style>
+  		
+  	
+	<script type="text/javascript">
+
+		$(document).ready(function(event){
+			$('#delete').click(function(){
+				return confirm("Are you sure to delete this post?");
+			})
+
+			$('.reply-btn').click(function(){
+				$(this).parent().parent().next('.replied-comments').fadeToggle()
+			});
+
+			/* like */
+			$(document).on('click', '#like', function(event){
+				event.preventDefault();
+				var pk = $(this).attr('value');
+				$.ajax({
+					type: 'POST',
+					url: '{% url "blog:like_post" %}',
+					data: {'id':pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+					dataType: 'json',
+					success: function(response){
+						$('#like-section'+pk).html(response['form'])
+						console.log($('#like-section'+pk).html(response['form']));
+					},
+					error: function(rs, e){
+						console.log(rs.responseText);
+					},
+				});
+			});
+
+			/* Follow */
+			$(document).on('click', '#follow', function(event){
+				event.preventDefault();
+				var pk = $(this).attr('value');
+				$.ajax({
+					type: 'POST',
+					url: '{% url "blog:follow" %}',
+					data: {'id':pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+					dataType: 'json',
+					success: function(response){
+						$('#follow-section').html(response['form'])
+						console.log($('#follow-section').html(response['form']));
+					},
+					error: function(rs, e){
+						console.log(rs.responseText);
+					},
+				});
+			});
+
+			/* Autocomplete*/
+			$( function() {
+			    $( "#profile" ).autocomplete({
+			    	
+			      source: '{% url "blog:auto_search" %}',
+			      position: { my : "right top", at: "right bottom", },
+			   	
+			      select: function( event, ui ) {
+			        $( "#profile" ).attr( "src", "images/" + ui.item.img );
+			        $( "#profile" ).val( ui.item.value );
+			        $( "#profile" ).attr("href", "url/" + ui.item.url );
+			        return false;
+			      }
+
+			    })
+			    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+			      return $( "<li>" )
+			        .append("<a href="+item.url+" style='text-decoration:none; border-radius:2px; border:none; padding-left:2px; padding-right: 2px;'><img src='"+item.image+"'height='30' style='border-radius:25px' /> <small>" +"@" + item.label +  " </small></a>")
+			        .appendTo( ul );
+			    };
+			    });  
+		});
+
+			/* comment form */
+			$(document).on('submit', '.comment-form', function(event){
+				event.preventDefault();
+				console.log($(this).serialize());
+				$.ajax({
+					type: 'POST',
+					url: $(this).attr('action'),
+					data: $(this).serialize(),
+					dataType: 'json',
+					success: function(response){
+						$('.main-form').html(response['form']);
+						$('textarea').val('');
+						$('.reply-btn').click(function(){
+						$(this).parent().parent().next('.replied-comments').fadeToggle()
+					});
+					},
+					error: function(rs, e){
+						console.log(rs.responseText);
+					},
+				});
+			});
+			/* reply form */
+			$(document).on('submit', '.reply-form', function(event){
+				event.preventDefault();
+				console.log($(this).serialize());
+				$.ajax({
+					type: 'POST',
+					url: $(this).attr('action'),
+					data: $(this).serialize(),
+					dataType: 'json',
+					success: function(response){
+						$('.main-form').html(response['form']);
+						$('textarea').val('');
+						$('.reply-btn').click(function(){
+						$(this).parent().parent().next('.replied-comments').fadeToggle()
+					});
+					},
+					error: function(rs, e){
+						console.log(rs.responseText);
+					},
+				});
+			});
+
+			$(document).ready(function(){
+			  $(".about").click(function(){
+			    $("#about").toggle();
+			  });
+			});
+
+			$(document).ready(function(){
+				$( "#id_birthday" ).datepicker({
+			      changeMonth: true,
+			      changeYear: true,
+			      yearRange: '1900:c',
+			      minDate: new Date(1900, 1-1, 1),
+			      maxDate: '-13Y',
+			    });
+			  } );
+
+			$( function() {
+			    $( "#tabs" ).tabs();
+			  } );
+
+			$("form").submit(function() {
+			  if (window.File && window.FileReader && window.FileList && window.Blob) {
+			    var file = $('#id_media')[0].files[0];
+
+			    if (file && file.size > 5 * 1024 * 1024) {
+			      alert("File " + file.name + " has a size greater than 5 MB. Please upload files less than 5 MB. ");
+			      return false;
+			    }
+			  }
+			});
+
+			//lazy-loading
+			document.addEventListener("DOMContentLoaded", function() {
+			  var lazyloadImages = document.querySelectorAll("img.lazy");    
+			  var lazyloadThrottleTimeout;
+			  
+			  function lazyload () {
+			    if(lazyloadThrottleTimeout) {
+			      clearTimeout(lazyloadThrottleTimeout);
+			    }    
+			    
+			    lazyloadThrottleTimeout = setTimeout(function() {
+			        var scrollTop = window.pageYOffset;
+			        lazyloadImages.forEach(function(img) {
+			            if(img.offsetTop < (window.innerHeight + scrollTop)) {
+			              img.src = img.dataset.src;
+			              img.classList.remove('lazy');
+			            }
+			        });
+			        if(lazyloadImages.length == 0) { 
+			          document.removeEventListener("scroll", lazyload);
+			          window.removeEventListener("resize", lazyload);
+			          window.removeEventListener("orientationChange", lazyload);
+			        }
+			    }, 20);
+			  }
+			  
+			  document.addEventListener("scroll", lazyload);
+			  window.addEventListener("resize", lazyload);
+			  window.addEventListener("orientationChange", lazyload);
+			});
+	</script>
+</body>
+</html>

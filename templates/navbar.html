@@ -1,0 +1,47 @@
+{% load static %}
+{% block head_extra %}
+{% endblock %}
+<body>
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-info">
+  <!--<a class="navbar-brand " href="{% url 'blog:post_list' %}"><img src="{% static 'images/default/cotton.png' %}" style="width:35px;height:35px"></a>-->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+   <a class="mx-1" href="{% url 'blog:post_list' %}" style="color: white"><i class="fas fa-home"></i></a>
+
+  <form class="form-inline my-2 my-lg-0 mx-1" action="{% url 'blog:post_list' %}">
+    <span><input class="form-control search" type="text" placeholder="Search" aria-label="Search" name="term" id="profile" style="border-radius: 25px;"></span>
+    <span><button class="btn btn-info mr-sm-2 btn-sm" type="submit" id="search">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+    </span>
+  </form>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        
+        <!--<a class="nav-link" href="{% url 'blog:create_post' %}"><i class="fas fa-plus"></i></a>-->
+      </li>
+    </ul>
+    
+      {% if request.user.is_authenticated %}
+        <ul class="navbar-nav">
+          <div class="dropdown show my-2">
+            <a class="thumbnail p-2" href="{% url 'blog:profile' request.user.username request.user.id %}" style="text-decoration: none;">
+            <img class="img-thumbnail rounded-circle p-0" src="{{ request.user.profile.avatar.url }}" alt="" class="navbar-img" style="max-width: 40px"><b style="color:white;"> {{ request.user.first_name|upper }} {{ request.user.last_name|upper }}</b>
+          </a>
+            <a class="dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-left dropdown-menu-sm-right my-2" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="{% url 'blog:edit_profile' %}"><small>Edit Profile</small></a>
+              <a class="dropdown-item" href="{% url 'blog:settings' request.user.username %}"><small>Settings</small></a>
+              <a class="dropdown-item" href="{% url 'blog:user_logout' %}"><small>Logout</small></a>
+            </div>
+          </div>
+        </ul>
+      {% endif %}
+  </div>
+</nav>
+</body>

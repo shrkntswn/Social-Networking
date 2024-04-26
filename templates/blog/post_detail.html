@@ -1,0 +1,121 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+<title>
+{% block title %}
+	Story
+{% endblock %}
+</title>
+	
+<body>
+{% block content %}
+<div class="container-fluid p-1 my-2">
+	{% if messages %}
+	{% for message in messages %}
+	<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+	  <a {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</a>
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	{% endfor %}
+	{% endif %}
+	  	
+	
+	<div class="container-fluid">
+		<div class="media">
+		  <a href="{{post.author.profile.profile_url}}">
+			<img class="rounded-circle border border-info" src="{{post.author.profile.avatar.url}}" style="width:45px; height:45px;">
+		  </a>
+		  <div class="media-body mx-1" style="">
+		    <a href="{{post.author.profile.profile_url}}" style="text-decoration: none;color: #158fb0;">
+				<h5>{{post.author.first_name|capfirst}} {{post.author.last_name|capfirst}}
+				<small style="color:grey;font-size: 12px;"><strong> (@{{post.author}})</small></strong></h5>
+			</a>
+			<div class="date-created mt-n2" style="color:grey;float: left">
+				<p><small>{{post.created}}</small></p>
+			</div>
+		  </div>
+		  {% if request.user == post.author %}
+			<div class="section" style="">
+				<button href="" type="button" id="edit"  class="btn btn-info btn-sm"  data-toggle="modal" data-target="#exampleModal"><i class="fas fa-pencil-alt"></i></button>
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="exampleModalLabel">Update your story</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <form action="{% url 'blog:post_edit' id=post.id %}" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							{% for field in user_post %}
+							<div class="fieldWrapper">
+					        <div class="form-group">
+					        <strong>{{ field.label_tag }}</strong>
+					        {{ field }}
+					      	</div>
+					    	</div>
+					    	{% endfor %}
+					    <div class="modal-footer">
+					        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					        <button type="submit" class="btn btn-info">Save changes</button>
+					    </div>
+				        </form>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<a href="{% url 'blog:post_delete' id=post.id %}" id="delete" class="btn btn-danger btn-sm">
+	            <i class="far fa-trash-alt"></i></a>
+			</div>
+		  {% endif %}
+    	</div><hr>
+	</div>
+	
+	<div class="container ">
+
+	  <div class="row">
+	  	{% if post.media and post.body %}
+	    <div class="col-md-6 col-lg-8 mb-2" style="">
+			<div class="post-img" href="" style="max-height: 1000px;text-align: center;">	
+				{% if post.media_kind == "image" %}
+				<a href="{{post.get_absolute_url}}">
+					<img  class="img-fluid" src="{{post.media.url}}" style="">
+				</a>
+				{% elif post.media_kind == "video" %}		
+				<video class="img-fluid" controls="" style="">
+					<source src="{{ post.media.url }}" type="video/mp4" style="">
+				</video>
+				{% else %}
+				<div><strong>Media type not supported</strong></div>
+				{% endif %}	
+			</div>
+		</div>
+		{% endif %}
+	    
+	    <div class="{% if post.media %}col-md-6 col-lg-4 {% else %}col-md-12{% endif %}"  style="">
+	    		
+		    {% if post.body %}
+	      	<div class="container" style="background-color: white; border-radius: 5px">
+				<div class="post-body p-3">
+					<h6 size="" style="font-family:Arial;">{{post.body|safe}}</h6>
+				</div>
+			</div>
+			{% endif %}
+			<div class="section p-2" id="like-section{{post.id}}">
+				<div class="container p-0">
+					{% include 'blog/like.html' %}
+				</div>
+			</div><br>
+		
+			<div class="main-form" id="Comments" style="max-width:500px">
+				{% include 'blog/comments.html'%}
+			</div>
+	    </div>
+	  </div>
+	</div>
+</div>	
+{% endblock %}
+</body>

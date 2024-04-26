@@ -1,0 +1,109 @@
+{% load static %}
+{% block head_extra %}
+{% endblock %}
+<body>
+<style>
+     #main-img{
+        content:url({% static 'images/default/e.png' %});
+        max-width:40px;
+     }
+     .search{
+           
+        }
+     .navbar-user{
+      display:none;
+    }
+
+    @media only screen and (min-width: 360px){   
+    #main-img{  
+           max-height: 40px;
+           max-width: 40px;    
+           content:url({% static 'images/default/e.png' %});
+         } 
+    .navbar-user{
+      display:none;
+      }   
+    }
+
+    @media only screen and (min-width: 500px) {
+      #main-img{   
+            width: 100%;
+            max-width: 80px;  
+            content:url({% static 'images/default/era.png' %});
+        }
+      .search{
+            
+            
+        }
+      .navbar-user{
+          display: none;
+        }
+      }
+   
+    @media only screen and (min-width: 600px) {
+      #main-img{   
+            width: 100%;
+            max-width: 80px;  
+            content:url({% static 'images/default/era.png' %});
+        }
+      .search{
+            
+            
+        }
+      .navbar-user{
+          display: unset;
+        }
+      }
+</style>
+
+ <nav class="fixed-top  navbar-dark bg-info">
+   <div class="px-2">
+<div class="row">
+  <div class="col-3 col-sm-3 col-md-3 col-lg-3 pt-2" style="" >
+    <a href="{% url 'blog:post_list' %}" class="brand"><img class="image" id="main-img" src="" style=""></a>
+    <a href="{% url 'blog:post_list' %}" style="color: white; text-decoration: none;"><i class="fas fa-home" style="color:white;"></i> Home</a>
+  </div>
+  <div class="col-6 col-sm-5 col-md-4 col-lg-4 pt-2 px-0">
+    <form class="" action="{% url 'blog:post_list' %}">
+      <div class="row d-flex justify-content-center">
+        <div class="col p-0">
+          <input class="form-control form-control-md search" type="text" placeholder=" Search" aria-label="Search" name="term" id="profile" style="border-radius: 20px;
+          box-shadow: 1px 2px 3px">
+        </div>
+        <div class="">
+          <button class="btn btn-md btn-info" type="submit" role="button" id="search"><i class="fas fa-search" aria-hidden="true" style="color:white;"></i>
+          </button>
+        </div>
+      </div>
+  </form>
+</div>
+  <div class="col-3 col-sm-4 col-md-5 col-lg-5 py-2">
+    {% if request.user.is_authenticated %}
+        <span class=""  style="float: right;">
+            <div class="media">
+              <a href="{% url 'blog:profile' request.user.username request.user.id %}">
+              <img class="rounded-circle border border-light" src="{{ request.user.profile.avatar.url }}" style="width:40px; height:40px;">
+              </a>
+              <span class="media-body mx-1 my-1" style="text-align: center">
+                <a href="{% url 'blog:profile' request.user.username request.user.id %}" style="text-decoration: none;color: white">
+                <h6 class="navbar-user" style="">{{ request.user.first_name|upper }} {{  request.user.last_name|upper }}</h6></a>
+                <span class="dropdown show" style="float: center;text-align: center">
+                  <a class="dropdown-toggle" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white;">
+                  </a>
+                  <span class="dropdown-menu dropdown-menu-left dropdown-menu-sm-right border-info my-3" aria-labelledby="dropdownMenuLink">
+                    <a class="card px-3 py-1 border-0" href="{% url 'blog:edit_profile' %}"  style="text-decoration:none;"><small class="btn btn-sm btn-info btn-block">Edit Profile</small></a>
+                    <a class="card px-3 py-1 border-0" href="{% url 'blog:settings' request.user.username %}" style="text-decoration:none;"><small class="btn btn-sm btn-info btn-block">Settings</small></a>
+                    <a class="card px-3 py-1 border-0" href="{% url 'blog:user_logout' %}"  style="text-decoration:none;"><small class="btn btn-sm btn-info btn-block">Logout</small></a>
+                  </span>
+                </span>
+              </span>
+              
+            </div>
+            
+        </span>
+    {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+</body>

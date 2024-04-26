@@ -1,0 +1,20 @@
+{% load static %}
+
+<div class="follow-container" style="text-align: center;">
+<div class="follow-detail mb-1">
+	<a class="border border-info p-2" style="color: grey;margin:5px; border-radius: 20px; ">{{ total_following }} Following</a>
+	<a class="border border-info p-2" style="color: grey;margin:5px; border-radius: 20px; ">{{ total_followers }} Follower{{ total_followers|pluralize }}</a>
+</div>
+
+{% if request.user.id != profile.user.id %}
+	<form action="{% url 'blog:follow' %}" method="post">
+		{% csrf_token %}
+		
+		{% if is_followed %}
+		<a type="submit" id="follow" name="profile_id" value="{{ profile.id }}" class="btn btn-light m-2"><i class="fas fa-thumbs-up"></i> UnFollow</a>
+		{% else %}
+		<a type="submit" id="follow" name="profile_id" value="{{ profile.id }}" class="btn btn-info m-2" style="color:white"><i class="fas fa-thumbs-up" style=""></i> Follow</a>
+		{% endif %}
+	</form>
+{% endif %}
+</div>

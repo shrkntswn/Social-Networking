@@ -1,0 +1,119 @@
+<style type="text/css">
+	.form-control{
+		border-radius: 20px;
+		box-shadow: 1px 2px 3px #158fb0;
+	}
+</style>
+{% for post, is_liked in zipped_posts %}
+{% for comments in posts_comments %}	<!--zip method can also be used-->
+{% if forloop.counter == forloop.parentloop.counter %}
+<div class="img-thumbnail my-3 border border-info" style="box-shadow: 1px 2px 5px #158fb0">
+<div class="container p-0">
+<!--MEDIA AND BODY-->
+	<div class="media p-2 mb-2">
+	  <a href="{{post.author.profile.profile_url}}">
+		<img class="rounded-circle border border-info" src="{{post.author.profile.avatar.url}}" style="width:45px; height:45px;">
+	  </a>
+	  <div class="media-body mx-1">
+	    <a href="{{post.author.profile.profile_url}}" style="text-decoration: none;color: #158fb0">
+			<h5>{{post.author.first_name|capfirst}} {{post.author.last_name|capfirst}}
+			<a style="color:grey;font-size: 14px;"> (@{{post.author}})</a>
+			</h5>
+		</a>
+		<div class="date-created mt-n2" style="color:grey;float: left">
+			<h6><small>{{post.created}}</small></h6>
+		</div>
+	  </div>
+	</div>
+	
+<a href="{{post.get_absolute_url}}" class="post-content my-1" style="text-decoration: none;color: black">
+	{% if post.body and post.media %}
+	<p class="text-justify px-3" style="font-family: Arial;font-size: 1rem;">{{post.body|safe|truncatewords:15}}
+	<a href="{{post.get_absolute_url}}" style="float:right;color:grey;text-decoration: none;" ><small></small></a></p>
+	{% else %}
+	<div class="container px-5 py-3">
+	<h6 style="font-family: Arial;font-size: 1rem;">{{post.body|safe|truncatewords:60}}
+	<a href="{{post.get_absolute_url}}" style="float:right;color:grey;text-decoration: none;" ><small><i class="fas fa-eye"></i></small></a></h6>
+	</div>
+	{% endif %}
+</a>
+<div class="img-fluid p-0" style="text-align: center;">
+	{% if post.media %}
+	<div class="post-img p-0" href="" style="text-align: center;">
+	{% if post.media_kind == "image" %}
+	<a href="{{post.get_absolute_url}}">
+		<img  class="img-fluid lazy" data-src="{{post.media.url}}" loading="lazy" style="max-height: 350px;">
+	</a>
+	{% elif post.media_kind == "video" %}		
+	<video class="img-fluid p-0" controls="" style="">
+		<source src="{{ post.media.url }}" type="video/mp4" preload="none" style="max-height: 350px; width:100%">
+	</video>
+	{% else %}
+	<div><strong>Media type not supported</strong></div>
+	{% endif %}
+  	</div>
+  	{% endif %}
+</div>
+<!--LIKES AND COMMENTS -->
+<div class="px-2 mb-1">
+	<p>
+		<div class="d-inline section" id="like-section{{post.id}}" >
+			<div class="container p-0">
+			{% include 'blog/like.html'%}
+			</div>
+		</div>
+	
+	  <a class="d-inline float-right mr-2" data-toggle="collapse" href="#collapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="collapseExample{{post.id}}" style="text-decoration: none; color: black;">
+	    <small><b>{{ comments.count }} <i class="fas fa-comment" style="color: grey;"></i>  COMMENTS</b> </small>
+	  </a>
+	</p><br>
+	{% if comments.count > 0 %}
+	<div class="collapse" id="collapseExample{{post.id}}">
+	  <div class="card card-body border-0 pb-0">
+	    {% for comment in comments|dictsortreversed:"id"|slice:":3" %}
+	    <!--FOR PROFILE DETAILS-->
+		<div class="media mb-1">
+		  <a href="{{comment.user.profile.profile_url}}">
+			<img class="rounded-circle border border-info" src="{{comment.user.profile.avatar.url}}" style="width:40px; height:40px;">
+		  </a>
+		  <div class="media-body mx-1" style="">
+		    <a href="{{comment.user.profile.profile_url}}" style="text-decoration: none;">
+				<strong style="font-size: 1rem;color: #158fb0">{{comment.user.first_name|capfirst}} {{comment.user.last_name|capfirst}}</strong>
+				<small style="color:grey;font-size: 12px;"> (@{{comment.user.username}})</small>
+			</a>
+			<br>
+			<div class="date-created" style="font-size: 0.8rem; margin-top: -5px;color:grey;">
+				<p>{{comment.timestamp}}</p>
+			</div>
+			<p class="p-1 mb-1" style="margin-top: -15px; font-size: 0.9rem; background-color: #e3e8e5; border-radius: 5px">{{ comment.content|safe }}</p>
+		  </div>
+		</div>
+		{% endfor %}
+		{% if comments.count > 3 %}
+		<a class="mb-0" href="{{post.get_absolute_url}}" style="text-align: center; text-decoration: none;color: #158fb0"><small>See more</small>
+		</a>
+		{% endif %}
+	  </div>
+	</div>
+	{% endif %}
+</div>
+<div class="container p-2" >
+	<form method="post" class="comment-form" action="{% url 'blog:post_detail' id=post.id %}">
+	{% csrf_token %}
+		<div class="row">
+			<div class="col">
+				{{ comment_form }}
+			</div>
+			<div class="float-right mr-3">
+				<button type="submit" value="Comment" class="btn btn-info" style="border-radius:50%">
+				<i class="far fa-paper-plane" aria-hidden="true"></i>
+				</button>
+			</div>
+		</div>
+	</form> 
+</div>	
+</div>
+</div>
+{% endif %}
+{% endfor %}
+{% endfor %}

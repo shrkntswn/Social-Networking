@@ -1,0 +1,139 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+<title>
+{% block title %}
+	Feeds
+{% endblock %}
+</title>
+	
+
+{% block content %}
+<body>
+
+<!--for outer container-->
+<div class="container my-2">
+	<div class="row">
+	<div class="col-md-4">
+		
+		<div class="profile-card" style="">
+			<!-- for cover photo -->
+			<a {% if access %} href="{% url 'blog:photo_list' %}" {% endif %}>
+				<div class="jumbotron jumbotron-fluid border-0 my-3"  style="width:100%;padding: 1px; ">
+					<img src="{{profile_user.cover_image.url}}" style="width:100%;background-size: cover;">
+				</div>
+			</a>
+				
+
+			<!-- for profile image-->
+			<div class="profile-img mx-1" style="margin-top:-20%; ">
+				<a {% if access %} href="{% url 'blog:avatar' %}" {% endif %}>
+				<img class="img-thumbnail rounded-circle border border-info" src="{{profile_user.avatar.url}}" alt="Profile-image" style=" width: 30%;"></a> 
+			</div>
+			
+			<h4 class="profile-img" style="width:100%; text-align: end;margin-top:-15%;">{{profile_user.user.first_name|capfirst}} {{profile_user.user.last_name|capfirst}}</h4> 
+			<p class="profile-img" style="width:100%; color: grey; text-align: end;margin-top:-2%;">(@{{profile_user.user.username}})</p>
+			
+			<div class="card-body p-2" style="text-align:center">
+				<a class="pr-3" style="font-size: 20px; "><b>{{ total_following }}</b> Following</a>
+				<a class="'pl-3" style="font-size: 20px; "><b>{{ total_followers }}</b> Follower{{ total_followers|pluralize }}</a>
+			</div>
+		</div>
+			<div class="create-card mt-2">
+			  <!--Create post-->
+			  <div class="img-thumbnail p-2 border border-info" id="" style="box-shadow: 1px 2px 5px #888888;">
+				<form action="/create-post/" method="post" class="uniForm" enctype="multipart/form-data">
+					{% csrf_token %}
+					{% for field in form %}
+					<div class="fieldWrapper">
+					<div class="form-group">
+					{{ field }}
+					  </div>
+					</div>
+					{% endfor %}
+					<div class="create-button"  style="text-align:right;">
+						<button class="btn-sm btn-info " type="submit">POST</button>
+					</div>
+				</form>
+			  </div>
+			</div>
+			<div class="card mt-3 p-3">
+				<h4>People You may know</h4>
+				{% for profile in people_u_may_know %}
+				<div class="img-thumbnail my-1" style="min-height:50px; padding-bottom: 5px">
+					<div class="container p-1">
+					<div class="media">
+					<a href="{{profile.profile_url}}">
+						<img class="rounded-circle border border-info" src="{{profile.avatar.url}}" style="width:40px; height:40px;">
+					</a>
+					<div class="media-body mx-1">
+						<a href="{{profile.profile_url}}" style="text-decoration: none;color: #158fb0">
+							<strong>{{profile.user.first_name|capfirst}} {{profile.user.last_name|capfirst}}</strong>
+							<small style="color:grey;font-size: 12px;"> (@{{profile.user.username}})</small>
+						</a>
+						<p class="text-muted" style="margin-top:-5px; font-size: 0.9rem">{% if profile.current_City %} {{profile.current_City}} {% endif %}{% if profile.country %}, {{profile.country}} {% endif %}</p>
+						<a class="" style=""><small><b>{{ profile.total_followers }}</b> Follower{{ profile.total_followers|pluralize }}</small></a>
+						<a class="" style=""><small><b>{{ profile.total_following }}</b> Following</small></a>
+					</div>
+					</div>
+					</div>
+				</div>	
+				{% endfor %}
+			</div>
+		
+	</div>
+	<div class="col-md-6">
+
+	<!-- query results-->
+	<div class="my-2">
+		{% if query %}
+		{% if query_user %}
+		<h3><a style="color: rgb(85, 84, 84);">Search results for </a><b>{{query}}</b></h3>
+		<p style="color: grey;">People</p>
+		{% for profile in profiles %}
+		<div class="img-thumbnail my-2 border border-info" style="box-shadow: 1px 2px 5px #158fb0; min-height:50px; padding-bottom: 10px">
+			<div class="container p-1">
+			<div class="media">
+			  <a href="{{profile.profile_url}}">
+				<img class="rounded-circle border border-info" src="{{profile.avatar.url}}" style="width:40px; height:40px;">
+			  </a>
+			  <div class="media-body mx-1">
+			    <a href="{{profile.profile_url}}" style="text-decoration: none;color: #158fb0">
+					<strong>{{profile.user.first_name|capfirst}} {{profile.user.last_name|capfirst}}</strong>
+					<small style="color:grey;font-size: 12px;"> (@{{profile.user.username}})</small>
+				</a>
+				<p class="text-muted" style="margin-top:-5px; font-size: 0.9rem">{% if profile.current_City %} {{profile.current_City}} {% endif %}{% if profile.country %}, {{profile.country}} {% endif %}</p>
+				<a class=" border border-info" style="border-radius: 5px;padding:2px"><small><b>{{ profile.total_followers }}</b> Follower{{ profile.total_followers|pluralize }}</small></a>
+				<a class=" border border-info" style="border-radius: 5px;padding:2px"><small><b>{{ profile.total_following }}</b> Following</small></a>
+			  </div>
+			</div>
+			</div>
+		</div>	
+		{% endfor %}
+		{% else %}
+		<h2 style="text-align:center">No such user found</h2>
+		{% endif %}
+		{% endif %}
+	</div>
+	{% if not query %}
+	{% if message %}
+	<div class="alert alert-danger alert-dismissible fade show" role="alert">
+	  {{message}}
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	{% endif %}
+	
+	{% endif %}
+	{% if query %}
+	<p style="color: grey;">Post</p>
+	{% endif %}
+	
+	<!-- for posts-->
+	{% include 'blog/likes-comments/common.html' %}	
+	</div>
+	
+</div>
+</body>
+{% endblock %}
+

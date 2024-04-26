@@ -1,0 +1,149 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+	<title>
+	{% block title %}
+		Profile
+	{% endblock %}
+	</title>
+
+	
+<body>
+{% block content %}
+<div class="container-fluid p-0 mt-n3">
+	
+<!-- for cover photo -->
+	<a {% if access %} href="{% url 'blog:photo_list' %}" {% endif %}>
+		<div class="jumbotron jumbotron-fluid border-0 my-3"  style="width:100%;padding: 1px; ">
+			<img src="{{profile.cover_image.url}}" style="width:100%;background-size: cover;">
+		</div>
+	</a>
+		
+
+<!-- for profile image-->
+	<div class="profile-img mx-1" style="margin-top:-15%; text-align: center; ">
+		<a {% if access %} href="{% url 'blog:avatar' %}" {% endif %}>
+		<img class="img-thumbnail rounded-circle border border-info" src="{{profile.avatar.url}}" alt="Profile-image" style="width: 15%; "></a> 
+	</div>
+	
+	<h2 class="profile-img" style="width:100%; text-align: center;">{{profile.user.first_name|capfirst}} {{profile.user.last_name|capfirst}}</h2> 
+	<h5 class="profile-img" style="width:100%; color: grey; text-align: center;">(@{{profile.user.username}})</h5> 
+		
+<div class="container">
+	<div class="row">
+<!-- for followers-->
+		
+<!-- for some details
+		<div class="col-md-7">
+			<ul class="nav nav-pills nav-fill">
+			  <li class="nav-item">
+			    <a role="button" class="nav-link about" style="color:#158fb0;text-decoration: none;cursor: pointer;"><h5>About</h5></a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" href="{% url 'blog:galley' profile.user.username %}" style="color: #158fb0;"><h5>Media</h5></a>
+			  </li>
+			</ul>
+		</div> -->
+	</div>
+	<hr>
+		
+	<div class="container">
+		<div class="row" id="">
+			<div class="col-md-4-auto col-lg-4" style="">
+				<div class="">
+					<div class="section" id="follow-section">
+						<div class="container p-0">
+							{% include 'blog/follow.html'%}
+						</div>
+					</div>
+				</div>
+				<table class="table-sm table-borderless-sm table-hover" id="about" style="">
+				  <tbody>
+				    <tr>
+				      <td><a class="list-group-item-sm list-group-item-action-primary" ><i class="far fa-newspaper"></i><span style="color:grey"> About:{{profile.about_Myself}}</span></a></td>
+				    </tr>
+				    <tr>
+				      <td><a class="list-group-item-sm list-group-item-action-primary" ><i class="fas fa-flag"></i><span style="color:grey"> Country: {{profile.country}}</span></a></td>
+				    </tr>
+				    <tr> 
+				      <td><a class="list-group-item-sm list-group-item-action-primary"><i class="fas fa-user-md"></i><span style="color:grey"> Profession: {{profile.profession}}</span></a></td>
+				    </tr>
+				    <tr>
+				      <td><a class="list-group-item-sm list-group-item-action-primary" ><i class="fas fa-map-marker-alt"></i><span style="color:grey"> Current city: {{profile.current_City}}</span></a></td>
+				    </tr>
+				    <tr>
+				      <td><a class="list-group-item-sm list-group-item-action-primary"><i class="far fa-address-card"></i><span style="color:grey"> Date Joined: {{profile.user.date_joined.date}}</span></a></td>
+				    </tr>
+				    <tr>
+				      <td><a class="list-group-item-sm list-group-item-action-primary"><i class="fas fa-birthday-cake"></i><span style="color:grey"> Birthday: {{profile.birthday}}</span></a></td>
+				    </tr>
+				  </tbody>
+				</table>
+				<br>
+
+
+<!--GALLERY-->			
+			<div class="gallary">
+				<h3 class=""><a href="{% url 'blog:galley' profile.user.username %}" style="text-decoration: none;color: black;">Media</a></h3>
+			  <div class="row d-flex justify-content-center" style="margin-top: 20px">	
+			  {% for post in posts|slice:":4" %}
+				{% if  post.media_kind == "image" or post.media_kind == "video" %}
+			    <!-- Button trigger modal -->
+				<button type="button" class="btn btn-outline-info col-5 col-sm-5 p-0 m-1" data-toggle="modal" data-target="#exampleModal{{post.id}}">
+				  {% if post.media_kind == "image" %}
+				  <div class="img-fluid" style="">
+		        	<img src="{{ post.media.url }}" href="" class="img-thumbnail p-0" style="width:100%; ">
+		          </div>
+		          {% elif post.media_kind == "video" %}
+				  <video class="img-fluid" style="width: 100%;">
+					<source src="{{ post.media.url }}" type="video/mp4"  style="">
+				  </video>
+				  {% endif %}
+				</button>
+				{% endif %}
+
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{post.id}}" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="exampleModalLabel">Media</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				      	{% if post.media_kind == "image" %}
+				      	<div class="col-md-12" style="">
+				        	<img src="{{ post.media.url }}" href="" class="img-thumbnail" style="width:100%;">
+				        </div>
+				      	{% elif post.media_kind == "video" %}
+				        <video class="img-fluid img-thumbnail" controls  style="">
+							<source src="{{ post.media.url }}" type="video/mp4"  style=" width:100%;">
+						</video>
+						{% endif %}
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				        <a href="{{post.get_absolute_url}}" type="button" class="btn btn-info">See Post</a>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			  {% endfor %}
+			  </div>
+			  <div class="see-all row d-flex justify-content-center">
+				<a href="{% url 'blog:galley' profile.user.username %}" style="text-decoration: none;">see all...</a>
+			  </div>
+			</div>
+			</div>
+		
+			<div class="col-md-8-auto col-lg-6 col-12 p-0">	
+				{% include 'blog/likes-comments/common.html' %}	
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+{% endblock %}
+</body>
+</html>

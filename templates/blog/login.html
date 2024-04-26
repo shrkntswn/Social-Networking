@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<body>
+  {% block content %}  
+	
+	<div class="container my-5">
+		<div class="row">
+			<div class="col-md-4 offset-md-4">
+				<div class="container">
+				<h1 class="" style="text-align: center;"><b>Please sign in</b></h1><br><br>
+				{% if message %}
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				     {{message}}
+				</div>
+				{% endif %}
+				<form method="post">
+					{% csrf_token %}
+					{% for field in form %}
+					<div class="fieldWrapper">
+				        <div class="form-group">
+					        <h5 style="text-align: center;">{{ field.label_tag }}</h5>
+					        {{ field }}
+					        {{ field.errors }}
+				    	</div>
+			    	</div>
+					{% endfor %}
+
+					<div class="form-group" style="text-align: center;">
+			            <div class="form-check">
+			                <input type="checkbox" name="rememberMeCheck" class="form-check-input" id="dropdownCheck">
+			                <label class="form-check-label" for="dropdownCheck">
+			                  Remember me
+			                </label>
+			            </div>
+			        </div>
+
+					<div class="container" style="text-align: center;">
+					<button class="btn btn-info" type="submit">Sign in</button>
+					</div><br>
+				</form>
+				<div class="container" style="text-align: center;">
+					<small><a class="" href="{% url 'password_reset' %}">Forgot Password?</a></small><br>
+					<a class="" href="{% url 'blog:user_registration' %}">Don't have an account</a>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{% endblock %}
+</body>
+</html>

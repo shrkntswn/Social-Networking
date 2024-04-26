@@ -1,0 +1,47 @@
+{% extends 'blog/base.html' %}
+
+
+<body>
+{% block content %}
+<div class="container my-2">
+	<h1>Gallery</h1><hr>
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">IMAGES</a></li>
+    <li><a href="#tabs-2">VIDEOS</a></li>
+  </ul>
+  <div id="tabs-1">
+    <div class="row d-flex justify-content-center">
+    {% for post in posts %}
+      {% if post.media_kind == "image" %}
+      <div class="col-6 col-sm-4 col-lg-3 mb-1 p-1">   
+          <a href="{{post.get_absolute_url}}">
+            <img src="{{ post.media.url }}" class="img-thumbnail img-fluid p-1  border-info" style="width:100%; max-height: 250px;">
+          </a>
+      </div>
+      {% endif %} 
+    {% endfor %} 
+    </div>
+  </div>
+  <div id="tabs-2">
+    <div class="row d-flex justify-content-center"> 
+    {% for post in posts %}
+      {% if post.media_kind == "video" %}
+      <div class="col-12 col-sm-6 col-md-6 col-lg-4 p-1">
+        <video class="img-fluid  border-info p-1" controls="" style="">
+          <source src="{{ post.media.url }}" type="video/mp4" style="width: 100%;">
+        </video>
+      </div>
+      {% endif %}    
+    {% endfor %}
+    </div>
+  </div>
+</div><br>
+{% if profile %}
+  <div class="section" style="text-align: center;">
+    <a class="btn btn-secondary" href="{{profile.get_absolute_url}}" role="button">Back</a>
+  </div><hr>
+{% endif %}
+</div>
+{% endblock %}
+</body>

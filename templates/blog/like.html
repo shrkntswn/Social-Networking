@@ -1,0 +1,10 @@
+{% load static %}
+
+	<form class="" action="" method="post">
+		{% csrf_token %}
+		{% if is_liked %}
+		<a class="" href="" role="submit" id="like" name="post_id" value="{{ post.id }}" class="icon p-2" style="border-radius: 20px;float: left;color:black;text-decoration: none"><div class="container"><small><b>{{ post.total_likes }} <i class="fas fa-thumbs-up" style="color:#525254;"></i> LIKED</b></small></div></a>
+		{% else %}
+		<a class="" href="" role="submit" id="like" name="post_id" value="{{ post.id }}" class="icon p-2" style="border-radius: 20px;float: left;color:black;text-decoration: none"><div class="container"><small><b>{{ post.total_likes }} <i class="fas fa-thumbs-up" style="color:#158fb0;"></i> LIKE</b></small></div></a>
+		{% endif %}
+	</form>
